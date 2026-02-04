@@ -237,116 +237,753 @@
 
 
 
+
+
+
+
+
+
+
+
+// import React, { useEffect, useState, useMemo } from "react";
+
+// const WHATSAPP_NUMBER = "994514195344";
+// const SHEET_JSON_URL =
+//   "https://opensheet.elk.sh/1-reT1K4Bbv771_JIoz12wRqhNxYOlaJXpLy7VRtH7Cs/menu";
+
+// const categories = [
+//   { key: "all", label: "Hamısı", icon: "fa-solid fa-list" },
+//   { key: "pizza", label: "Pizza", icon: "fa-solid fa-pizza-slice" },
+//   { key: "burger", label: "Burger", icon: "fa-solid fa-burger" },
+//   { key: "hot", label: "İsti yeməklər", icon: "fa-solid fa-fire" },
+//   { key: "hookah", label: "Qəlyan", icon: "fa-solid fa-smoke" },
+//   { key: "drink", label: "İçki", icon: "fa-solid fa-mug-saucer" },
+// ];
+
+// const formatAZN = (n) => `${parseFloat(n).toFixed(2)} AZN`;
+
+// export default function App() {
+//   const [products, setProducts] = useState([]);
+//   const [selectedCategory, setSelectedCategory] = useState("all");
+//   const [cart, setCart] = useState({});
+//   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+//   const [tableNumber, setTableNumber] = useState("");
+
+//   // Fetch Google Sheets data
+//   useEffect(() => {
+//     fetch(SHEET_JSON_URL)
+//       .then((res) => res.json())
+//       .then((data) => {
+//         // Data may need mapping if your sheet columns have headers like: id, title, desc, price, cat, tag
+//         const mapped = data.map((item, index) => ({
+//           id: index + 1,
+//           title: item.title,
+//           desc: item.desc,
+//           price: parseFloat(item.price),
+//           cat: item.cat,
+//           tag: item.tag,
+//         }));
+//         setProducts(mapped);
+//       })
+//       .catch((err) => console.error("Failed to fetch sheet:", err));
+//   }, []);
+
+//   const filteredProducts = useMemo(() => {
+//     return products.filter((p) =>
+//       selectedCategory === "all" ? true : p.cat === selectedCategory
+//     );
+//   }, [products, selectedCategory]);
+
+//   const cartItems = useMemo(() => {
+//     return Object.keys(cart)
+//       .map(Number)
+//       .map((id) => {
+//         const product = products.find((p) => p.id === id);
+//         return { ...product, qty: cart[id] };
+//       })
+//       .filter(Boolean);
+//   }, [cart, products]);
+
+//   const cartCount = useMemo(() => {
+//     return cartItems.reduce((sum, i) => sum + i.qty, 0);
+//   }, [cartItems]);
+
+//   const total = useMemo(() => {
+//     return cartItems.reduce((sum, i) => sum + i.price * i.qty, 0);
+//   }, [cartItems]);
+
+//   const addToCart = (id) => {
+//     setCart((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+//     setIsDrawerOpen(true);
+//   };
+
+//   const removeFromCart = (id) => {
+//     setCart((prev) => {
+//       const next = { ...prev };
+//       if (!next[id]) return next;
+//       next[id] -= 1;
+//       if (next[id] <= 0) delete next[id];
+//       return next;
+//     });
+//   };
+
+//   const clearCart = () => {
+//     setCart({});
+//   };
+
+//   const checkout = () => {
+//     if (cartItems.length === 0) {
+//       alert("Səbət boşdur!");
+//       return;
+//     }
+
+//     if (!tableNumber.trim()) {
+//       alert("Zəhmət olmasa masa nömrəsini daxil edin!");
+//       return;
+//     }
+
+//     const now = new Date();
+//     const dateStr = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+
+//     let msg = `Sifariş:\nMasa: ${tableNumber}\nTarix/Saat: ${dateStr}\n\n`;
+//     cartItems.forEach((i) => {
+//       msg += `${i.title} x${i.qty} - ${formatAZN(i.price * i.qty)}\n`;
+//     });
+//     msg += `\nToplam: ${formatAZN(total)}`;
+
+//     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+//     window.open(url, "_blank");
+
+//     setCart({});
+//     setTableNumber("");
+//     setIsDrawerOpen(false);
+//   };
+
+//   return (
+//     <>
+//       <div className="container">
+//         <header className="topbar">
+//           <div className="brand">
+//             <div className="logo">DM</div>
+//             <div>
+//               <h1>DigiMenu Restaurant</h1>
+//               <p>WhatsApp Sifariş • QR Menu</p>
+//             </div>
+//           </div>
+
+//           <div className="chips-container">
+//             {categories.map((c) => (
+//               <div
+//                 key={c.key}
+//                 className={`chip ${selectedCategory === c.key ? "active" : ""}`}
+//                 onClick={() => setSelectedCategory(c.key)}
+//               >
+//                 <i className={c.icon}></i> {c.label}
+//               </div>
+//             ))}
+//           </div>
+
+//           <div className="cartBtn" onClick={() => setIsDrawerOpen(true)}>
+//             🛒 Səbət <div className="badge">{cartCount}</div>
+//           </div>
+//         </header>
+
+//         <div className="menuHeader">
+//           <div className="menuHeaderLeft">
+//             <h2>📋 Menyu</h2>
+//             <small>{filteredProducts.length} məhsul</small>
+//           </div>
+//           <div className="currencyBadge">Qiymətlər • AZN</div>
+//         </div>
+
+//         <section className="grid">
+//           {filteredProducts.map((p) => (
+//             <div className="item" key={p.id}>
+//               <div className="itemTop">
+//                 <div>
+//                   <div className="itemTitle">{p.title}</div>
+//                   <div className="itemDesc">{p.desc}</div>
+//                 </div>
+//                 <div className="tag">{p.tag}</div>
+//               </div>
+
+//               <div className="priceRow">
+//                 <div className="price">{formatAZN(p.price)}</div>
+//                 <button className="addBtn" onClick={() => addToCart(p.id)}>
+//                   ➕ Əlavə et
+//                 </button>
+//               </div>
+//             </div>
+//           ))}
+//         </section>
+//       </div>
+
+//       <div className={`overlay ${isDrawerOpen ? "show" : ""}`} onClick={() => setIsDrawerOpen(false)}></div>
+
+//       <aside className={`drawer ${isDrawerOpen ? "show" : ""}`}>
+//         <div className="drawerHead">
+//           <h3>🛒 Səbət</h3>
+//           <button className="closeBtn" onClick={() => setIsDrawerOpen(false)}>
+//             Bağla ✖
+//           </button>
+//         </div>
+
+//         <input
+//           className="input"
+//           value={tableNumber}
+//           onChange={(e) => setTableNumber(e.target.value)}
+//           type="text"
+//           placeholder="Masa nömrəsini daxil edin..."
+//         />
+
+//         <div className="cartList">
+//           {cartItems.length === 0 ? (
+//             <div style={{ marginTop: 14, color: "var(--muted)", textAlign: "center" }}>
+//               Səbət boşdur
+//             </div>
+//           ) : (
+//             cartItems.map((i) => (
+//               <div className="cartItem" key={i.id}>
+//                 <div>
+//                   <b>{i.title}</b>
+//                   <small>
+//                     {formatAZN(i.price)} x {i.qty}
+//                   </small>
+//                 </div>
+
+//                 <div className="qty">
+//                   <button onClick={() => removeFromCart(i.id)}>-</button>
+//                   <span>{i.qty}</span>
+//                   <button onClick={() => addToCart(i.id)}>+</button>
+//                 </div>
+//               </div>
+//             ))
+//           )}
+//         </div>
+
+//         <div className="cartFooter">
+//           <div className="totalRow">
+//             <span>Toplam:</span>
+//             <span>{formatAZN(total)}</span>
+//           </div>
+
+//           <button className="checkoutBtn" onClick={checkout}>
+//             WhatsApp ilə sifariş göndər
+//           </button>
+
+//           <button className="dangerBtn" onClick={clearCart}>
+//             Səbəti təmizlə
+//           </button>
+//         </div>
+//       </aside>
+//     </>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useEffect, useState, useMemo } from "react";
+
+// const WHATSAPP_NUMBER = "994514195344";
+// const SHEET_JSON_URL =
+//   "https://opensheet.elk.sh/1-reT1K4Bbv771_JIoz12wRqhNxYOlaJXpLy7VRtH7Cs/menu";
+
+// /* 🌍 Tərcümələr */
+// const t = {
+//   az: {
+//     brandDesc: "WhatsApp Sifariş • QR Menu",
+//     menu: "Menyu",
+//     cart: "Səbət",
+//     add: "Əlavə et",
+//     total: "Toplam",
+//     empty: "Səbət boşdur",
+//     table: "Masa nömrəsini daxil edin...",
+//     checkout: "WhatsApp ilə sifariş göndər",
+//     clear: "Səbəti təmizlə",
+//     close: "Bağla",
+//     prices: "Qiymətlər • AZN",
+//     product: "məhsul",
+//   },
+//   en: {
+//     brandDesc: "WhatsApp Order • QR Menu",
+//     menu: "Menu",
+//     cart: "Cart",
+//     add: "Add",
+//     total: "Total",
+//     empty: "Cart is empty",
+//     table: "Enter table number...",
+//     checkout: "Send order via WhatsApp",
+//     clear: "Clear cart",
+//     close: "Close",
+//     prices: "Prices • AZN",
+//     product: "products",
+//   },
+//   ru: {
+//     brandDesc: "Заказ WhatsApp • QR Меню",
+//     menu: "Меню",
+//     cart: "Корзина",
+//     add: "Добавить",
+//     total: "Итого",
+//     empty: "Корзина пуста",
+//     table: "Введите номер стола...",
+//     checkout: "Отправить заказ через WhatsApp",
+//     clear: "Очистить корзину",
+//     close: "Закрыть",
+//     prices: "Цены • AZN",
+//     product: "товаров",
+//   },
+// };
+
+// /* 📂 Kateqoriyalar dili ilə */
+// const categories = [
+//   { key: "all", icon: "fa-solid fa-list", label: { az: "Hamısı", en: "All", ru: "Все" } },
+//   { key: "pizza", icon: "fa-solid fa-pizza-slice", label: { az: "Pizza", en: "Pizza", ru: "Пицца" } },
+//   { key: "burger", icon: "fa-solid fa-burger", label: { az: "Burger", en: "Burger", ru: "Бургер" } },
+//   { key: "hot", icon: "fa-solid fa-fire", label: { az: "İsti", en: "Hot", ru: "Горячее" } },
+//   { key: "hookah", icon: "fa-solid fa-smoke", label: { az: "Qəlyan", en: "Hookah", ru: "Кальян" } },
+//   { key: "drink", icon: "fa-solid fa-mug-saucer", label: { az: "İçki", en: "Drink", ru: "Напитки" } },
+// ];
+
+// const formatAZN = (n) => `${parseFloat(n).toFixed(2)} AZN`;
+
+// export default function App() {
+//   const [lang, setLang] = useState("az");
+//   const [products, setProducts] = useState([]);
+//   const [selectedCategory, setSelectedCategory] = useState("all");
+//   const [cart, setCart] = useState({});
+//   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+//   const [tableNumber, setTableNumber] = useState("");
+
+//   /* 📡 Google Sheets-dən data */
+//   useEffect(() => {
+//     fetch(SHEET_JSON_URL)
+//       .then((res) => res.json())
+//       .then((data) => {
+//         const mapped = data.map((item, index) => ({
+//           id: index + 1,
+//           title: item[`title_${lang}`] || item.title_az,
+//           desc: item[`desc_${lang}`] || item.desc_az,
+//           price: parseFloat(item.price),
+//           cat: item.cat,
+//           tag: item.tag,
+//         }));
+//         setProducts(mapped);
+//       })
+//       .catch((err) => console.error("Sheet error:", err));
+//   }, [lang]);
+
+//   /* 🔎 Filter edilmiş məhsullar */
+//   const filteredProducts = useMemo(
+//     () =>
+//       products.filter((p) =>
+//         selectedCategory === "all" ? true : p.cat === selectedCategory
+//       ),
+//     [products, selectedCategory]
+//   );
+
+//   /* 🛒 Səbət elementləri */
+//   const cartItems = useMemo(
+//     () =>
+//       Object.keys(cart)
+//         .map(Number)
+//         .map((id) => {
+//           const product = products.find((p) => p.id === id);
+//           return product ? { ...product, qty: cart[id] } : null;
+//         })
+//         .filter(Boolean),
+//     [cart, products]
+//   );
+
+//   const cartCount = useMemo(
+//     () => cartItems.reduce((s, i) => s + i.qty, 0),
+//     [cartItems]
+//   );
+
+//   const total = useMemo(
+//     () => cartItems.reduce((s, i) => s + i.price * i.qty, 0),
+//     [cartItems]
+//   );
+
+//   const addToCart = (id) => {
+//     setCart((p) => ({ ...p, [id]: (p[id] || 0) + 1 }));
+//     setIsDrawerOpen(true);
+//   };
+
+//   const removeFromCart = (id) => {
+//     setCart((p) => {
+//       const n = { ...p };
+//       n[id]--;
+//       if (n[id] <= 0) delete n[id];
+//       return n;
+//     });
+//   };
+
+//   const clearCart = () => setCart({});
+
+//   const checkout = () => {
+//     if (!cartItems.length) {
+//       alert(t[lang].empty);
+//       return;
+//     }
+//     if (!tableNumber.trim()) {
+//       alert(t[lang].table);
+//       return;
+//     }
+
+//     let msg = `${t[lang].cart}\nMasa: ${tableNumber}\n\n`;
+//     cartItems.forEach(
+//       (i) =>
+//         (msg += `${i.title} x${i.qty} - ${formatAZN(i.price * i.qty)}\n`)
+//     );
+//     msg += `\n${t[lang].total}: ${formatAZN(total)}`;
+
+//     window.open(
+//       `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,
+//       "_blank"
+//     );
+
+//     clearCart();
+//     setTableNumber("");
+//     setIsDrawerOpen(false);
+//   };
+
+//   return (
+//     <>
+//       <div className="container">
+//         <header className="topbar">
+//           <div className="brand">
+//             <div className="logo">DM</div>
+//             <div>
+//               <h1>DigiMenu</h1>
+//               <p>{t[lang].brandDesc}</p>
+//             </div>
+//           </div>
+
+//           {/* 🌍 Dil seçimi */}
+//           <div className="langSwitch">
+//             <button onClick={() => setLang("az")}>AZ</button>
+//             <button onClick={() => setLang("en")}>EN</button>
+//             <button onClick={() => setLang("ru")}>RU</button>
+//           </div>
+
+//           {/* 📂 Kateqoriyalar */}
+//           <div className="chips-container">
+//             {categories.map((c) => (
+//               <div
+//                 key={c.key}
+//                 className={`chip ${selectedCategory === c.key ? "active" : ""}`}
+//                 onClick={() => setSelectedCategory(c.key)}
+//               >
+//                 <i className={c.icon}></i> {c.label[lang]}
+//               </div>
+//             ))}
+//           </div>
+
+//           {/* 🛒 Səbət */}
+//           <div className="cartBtn" onClick={() => setIsDrawerOpen(true)}>
+//             🛒 {t[lang].cart} <div className="badge">{cartCount}</div>
+//           </div>
+//         </header>
+
+//         <div className="menuHeader">
+//           <div className="menuHeaderLeft">
+//             <h2>📋 {t[lang].menu}</h2>
+//             <small>
+//               {filteredProducts.length} {t[lang].product}
+//             </small>
+//           </div>
+//           <div className="currencyBadge">{t[lang].prices}</div>
+//         </div>
+
+//         <section className="grid">
+//           {filteredProducts.map((p) => (
+//             <div className="item" key={p.id}>
+//               <div className="itemTop">
+//                 <div>
+//                   <div className="itemTitle">{p.title}</div>
+//                   <div className="itemDesc">{p.desc}</div>
+//                 </div>
+//                 <div className="tag">{p.tag}</div>
+//               </div>
+//               <div className="priceRow">
+//                 <div className="price">{formatAZN(p.price)}</div>
+//                 <button className="addBtn" onClick={() => addToCart(p.id)}>
+//                   ➕ {t[lang].add}
+//                 </button>
+//               </div>
+//             </div>
+//           ))}
+//         </section>
+//       </div>
+
+//       {/* 🛒 Drawer */}
+//       <div className={`overlay ${isDrawerOpen ? "show" : ""}`} onClick={() => setIsDrawerOpen(false)}></div>
+
+//       <aside className={`drawer ${isDrawerOpen ? "show" : ""}`}>
+//         <div className="drawerHead">
+//           <h3>🛒 {t[lang].cart}</h3>
+//           <button className="closeBtn" onClick={() => setIsDrawerOpen(false)}>
+//             {t[lang].close} ✖
+//           </button>
+//         </div>
+
+//         <input
+//           className="input"
+//           value={tableNumber}
+//           onChange={(e) => setTableNumber(e.target.value)}
+//           type="text"
+//           placeholder={t[lang].table}
+//         />
+
+//         <div className="cartList">
+//           {cartItems.length === 0 ? (
+//             <div style={{ marginTop: 14, color: "var(--muted)", textAlign: "center" }}>
+//               {t[lang].empty}
+//             </div>
+//           ) : (
+//             cartItems.map((i) => (
+//               <div className="cartItem" key={i.id}>
+//                 <div>
+//                   <b>{i.title}</b>
+//                   <small>
+//                     {formatAZN(i.price)} x {i.qty}
+//                   </small>
+//                 </div>
+//                 <div className="qty">
+//                   <button onClick={() => removeFromCart(i.id)}>-</button>
+//                   <span>{i.qty}</span>
+//                   <button onClick={() => addToCart(i.id)}>+</button>
+//                 </div>
+//               </div>
+//             ))
+//           )}
+//         </div>
+
+//         <div className="cartFooter">
+//           <div className="totalRow">
+//             <span>{t[lang].total}:</span>
+//             <span>{formatAZN(total)}</span>
+//           </div>
+//           <button className="checkoutBtn" onClick={checkout}>
+//             {t[lang].checkout}
+//           </button>
+//           <button className="dangerBtn" onClick={clearCart}>
+//             {t[lang].clear}
+//           </button>
+//         </div>
+//       </aside>
+//     </>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useEffect, useState, useMemo } from "react";
 
 const WHATSAPP_NUMBER = "994514195344";
 const SHEET_JSON_URL =
   "https://opensheet.elk.sh/1-reT1K4Bbv771_JIoz12wRqhNxYOlaJXpLy7VRtH7Cs/menu";
 
-const categories = [
-  { key: "all", label: "Hamısı", icon: "fa-solid fa-list" },
-  { key: "pizza", label: "Pizza", icon: "fa-solid fa-pizza-slice" },
-  { key: "burger", label: "Burger", icon: "fa-solid fa-burger" },
-  { key: "hot", label: "İsti yeməklər", icon: "fa-solid fa-fire" },
-  { key: "hookah", label: "Qəlyan", icon: "fa-solid fa-smoke" },
-  { key: "drink", label: "İçki", icon: "fa-solid fa-mug-saucer" },
-];
+/* 🌍 Tərcümələr */
+const t = {
+  az: {
+    brandDesc: "WhatsApp Sifariş • QR Menu",
+    all: "Hamısı",
+    pizza: "Pizza",
+    burger: "Burger",
+    hot: "İsti yeməklər",
+    hookah: "Qəlyan",
+    drink: "İçki",
+    menu: "Menyu",
+    cart: "Səbət",
+    add: "Əlavə et",
+    total: "Toplam",
+    empty: "Səbət boşdur",
+    table: "Masa nömrəsini daxil edin...",
+    tableAlert: "Zəhmət olmasa masa nömrəsini daxil edin!",
+    checkout: "WhatsApp ilə sifariş göndər",
+    clear: "Səbəti təmizlə",
+    close: "Bağla",
+    prices: "Qiymətlər • AZN",
+    product: "məhsul",
+  },
+  en: {
+    brandDesc: "WhatsApp Order • QR Menu",
+    all: "All",
+    pizza: "Pizza",
+    burger: "Burger",
+    hot: "Hot meals",
+    hookah: "Hookah",
+    drink: "Drink",
+    menu: "Menu",
+    cart: "Cart",
+    add: "Add",
+    total: "Total",
+    empty: "Cart is empty",
+    table: "Enter table number...",
+    tableAlert: "Please enter table number!",
+    checkout: "Send order via WhatsApp",
+    clear: "Clear cart",
+    close: "Close",
+    prices: "Prices • AZN",
+    product: "products",
+  },
+  ru: {
+    brandDesc: "Заказ WhatsApp • QR Меню",
+    all: "Все",
+    pizza: "Пицца",
+    burger: "Бургер",
+    hot: "Горячие блюда",
+    hookah: "Кальян",
+    drink: "Напитки",
+    menu: "Меню",
+    cart: "Корзина",
+    add: "Добавить",
+    total: "Итого",
+    empty: "Корзина пуста",
+    table: "Введите номер стола...",
+    tableAlert: "Пожалуйста, введите номер стола!",
+    checkout: "Отправить заказ через WhatsApp",
+    clear: "Очистить корзину",
+    close: "Закрыть",
+    prices: "Цены • AZN",
+    product: "товаров",
+  },
+};
+
+/* 📂 Kateqoriyalar */
+const categories = ["all", "pizza", "burger", "hot", "hookah", "drink"];
 
 const formatAZN = (n) => `${parseFloat(n).toFixed(2)} AZN`;
 
 export default function App() {
+  const [lang, setLang] = useState("az");
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [cart, setCart] = useState({});
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [tableNumber, setTableNumber] = useState("");
+  const [timeLimitReached, setTimeLimitReached] = useState(false);
 
-  // Fetch Google Sheets data
+  /* 📡 Google Sheets-dən data (active = yes yoxlanır) */
   useEffect(() => {
     fetch(SHEET_JSON_URL)
       .then((res) => res.json())
       .then((data) => {
-        // Data may need mapping if your sheet columns have headers like: id, title, desc, price, cat, tag
-        const mapped = data.map((item, index) => ({
-          id: index + 1,
-          title: item.title,
-          desc: item.desc,
-          price: parseFloat(item.price),
-          cat: item.cat,
-          tag: item.tag,
-        }));
+        const mapped = data
+          .filter(item => item.active === "yes") // yalnız aktiv məhsullar qalır
+          .map((item, index) => ({
+            id: index + 1,
+            title: item[`title_${lang}`] || item.title,
+            desc: item[`desc_${lang}`] || item.desc,
+            price: parseFloat(item.price),
+            cat: item.cat,
+            tag: item.tag,
+          }));
         setProducts(mapped);
       })
-      .catch((err) => console.error("Failed to fetch sheet:", err));
-  }, []);
+      .catch((err) => console.error("Sheet error:", err));
+  }, [lang]);
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((p) =>
-      selectedCategory === "all" ? true : p.cat === selectedCategory
-    );
-  }, [products, selectedCategory]);
+  /* ⏱ Səbət üçün 30 dəq limit */
+  useEffect(() => {
+    if (!tableNumber) return;
+    setTimeLimitReached(false);
+    const timer = setTimeout(() => setTimeLimitReached(true), 30 * 60 * 1000); // 30 dəq
+    return () => clearTimeout(timer);
+  }, [tableNumber]);
 
-  const cartItems = useMemo(() => {
-    return Object.keys(cart)
-      .map(Number)
-      .map((id) => {
-        const product = products.find((p) => p.id === id);
-        return { ...product, qty: cart[id] };
-      })
-      .filter(Boolean);
-  }, [cart, products]);
+  const filteredProducts = useMemo(
+    () =>
+      products.filter((p) =>
+        selectedCategory === "all" ? true : p.cat === selectedCategory
+      ),
+    [products, selectedCategory]
+  );
 
-  const cartCount = useMemo(() => {
-    return cartItems.reduce((sum, i) => sum + i.qty, 0);
-  }, [cartItems]);
+  const cartItems = useMemo(
+    () =>
+      Object.keys(cart)
+        .map(Number)
+        .map((id) => {
+          const product = products.find((p) => p.id === id);
+          return product ? { ...product, qty: cart[id] } : null;
+        })
+        .filter(Boolean),
+    [cart, products]
+  );
 
-  const total = useMemo(() => {
-    return cartItems.reduce((sum, i) => sum + i.price * i.qty, 0);
-  }, [cartItems]);
+  const cartCount = useMemo(
+    () => cartItems.reduce((s, i) => s + i.qty, 0),
+    [cartItems]
+  );
+
+  const total = useMemo(
+    () => cartItems.reduce((s, i) => s + i.price * i.qty, 0),
+    [cartItems]
+  );
 
   const addToCart = (id) => {
-    setCart((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+    if (timeLimitReached) return;
+    setCart((p) => ({ ...p, [id]: (p[id] || 0) + 1 }));
     setIsDrawerOpen(true);
   };
 
   const removeFromCart = (id) => {
-    setCart((prev) => {
-      const next = { ...prev };
-      if (!next[id]) return next;
-      next[id] -= 1;
-      if (next[id] <= 0) delete next[id];
-      return next;
+    if (timeLimitReached) return;
+    setCart((p) => {
+      const n = { ...p };
+      n[id]--;
+      if (n[id] <= 0) delete n[id];
+      return n;
     });
   };
 
   const clearCart = () => {
+    if (timeLimitReached) return;
     setCart({});
   };
 
   const checkout = () => {
-    if (cartItems.length === 0) {
-      alert("Səbət boşdur!");
-      return;
-    }
+    if (timeLimitReached || !cartItems.length) return;
 
     if (!tableNumber.trim()) {
-      alert("Zəhmət olmasa masa nömrəsini daxil edin!");
+      alert(t[lang].tableAlert);
       return;
     }
 
-    const now = new Date();
-    const dateStr = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+    let msg = `${t[lang].cart}\nMasa: ${tableNumber}\n\n`;
+    cartItems.forEach(
+      (i) =>
+        (msg += `${i.title} x${i.qty} - ${formatAZN(i.price * i.qty)}\n`)
+    );
+    msg += `\n${t[lang].total}: ${formatAZN(total)}`;
 
-    let msg = `Sifariş:\nMasa: ${tableNumber}\nTarix/Saat: ${dateStr}\n\n`;
-    cartItems.forEach((i) => {
-      msg += `${i.title} x${i.qty} - ${formatAZN(i.price * i.qty)}\n`;
-    });
-    msg += `\nToplam: ${formatAZN(total)}`;
+    window.open(
+      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,
+      "_blank"
+    );
 
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-    window.open(url, "_blank");
-
-    setCart({});
+    clearCart();
     setTableNumber("");
     setIsDrawerOpen(false);
   };
@@ -358,34 +995,42 @@ export default function App() {
           <div className="brand">
             <div className="logo">DM</div>
             <div>
-              <h1>DigiMenu Restaurant</h1>
-              <p>WhatsApp Sifariş • QR Menu</p>
+              <h1>DigiMenu</h1>
+              <p>{t[lang].brandDesc}</p>
             </div>
           </div>
 
+          {/* 🌍 Dil seçimi */}
+          <div className="langSwitch">
+            <button onClick={() => setLang("az")}>AZ</button>
+            <button onClick={() => setLang("en")}>EN</button>
+            <button onClick={() => setLang("ru")}>RU</button>
+          </div>
+
+          {/* 🏷 Kateqoriyalar */}
           <div className="chips-container">
             {categories.map((c) => (
               <div
-                key={c.key}
-                className={`chip ${selectedCategory === c.key ? "active" : ""}`}
-                onClick={() => setSelectedCategory(c.key)}
+                key={c}
+                className={`chip ${selectedCategory === c ? "active" : ""}`}
+                onClick={() => setSelectedCategory(c)}
               >
-                <i className={c.icon}></i> {c.label}
+                {c === "all" ? t[lang].all : t[lang][c]}
               </div>
             ))}
           </div>
 
           <div className="cartBtn" onClick={() => setIsDrawerOpen(true)}>
-            🛒 Səbət <div className="badge">{cartCount}</div>
+            🛒 {t[lang].cart} <div className="badge">{cartCount}</div>
           </div>
         </header>
 
         <div className="menuHeader">
-          <div className="menuHeaderLeft">
-            <h2>📋 Menyu</h2>
-            <small>{filteredProducts.length} məhsul</small>
-          </div>
-          <div className="currencyBadge">Qiymətlər • AZN</div>
+          <h2>📋 {t[lang].menu}</h2>
+          <small>
+            {filteredProducts.length} {t[lang].product}
+          </small>
+          <div className="currencyBadge">{t[lang].prices}</div>
         </div>
 
         <section className="grid">
@@ -401,8 +1046,12 @@ export default function App() {
 
               <div className="priceRow">
                 <div className="price">{formatAZN(p.price)}</div>
-                <button className="addBtn" onClick={() => addToCart(p.id)}>
-                  ➕ Əlavə et
+                <button
+                  className="addBtn"
+                  disabled={timeLimitReached}
+                  onClick={() => addToCart(p.id)}
+                >
+                  ➕ {t[lang].add}
                 </button>
               </div>
             </div>
@@ -410,13 +1059,16 @@ export default function App() {
         </section>
       </div>
 
-      <div className={`overlay ${isDrawerOpen ? "show" : ""}`} onClick={() => setIsDrawerOpen(false)}></div>
+      <div
+        className={`overlay ${isDrawerOpen ? "show" : ""}`}
+        onClick={() => setIsDrawerOpen(false)}
+      ></div>
 
       <aside className={`drawer ${isDrawerOpen ? "show" : ""}`}>
         <div className="drawerHead">
-          <h3>🛒 Səbət</h3>
+          <h3>🛒 {t[lang].cart}</h3>
           <button className="closeBtn" onClick={() => setIsDrawerOpen(false)}>
-            Bağla ✖
+            {t[lang].close} ✖
           </button>
         </div>
 
@@ -425,13 +1077,15 @@ export default function App() {
           value={tableNumber}
           onChange={(e) => setTableNumber(e.target.value)}
           type="text"
-          placeholder="Masa nömrəsini daxil edin..."
+          placeholder={t[lang].table}
         />
 
         <div className="cartList">
           {cartItems.length === 0 ? (
-            <div style={{ marginTop: 14, color: "var(--muted)", textAlign: "center" }}>
-              Səbət boşdur
+            <div
+              style={{ marginTop: 14, color: "var(--muted)", textAlign: "center" }}
+            >
+              {t[lang].empty}
             </div>
           ) : (
             cartItems.map((i) => (
@@ -444,9 +1098,13 @@ export default function App() {
                 </div>
 
                 <div className="qty">
-                  <button onClick={() => removeFromCart(i.id)}>-</button>
+                  <button disabled={timeLimitReached} onClick={() => removeFromCart(i.id)}>
+                    -
+                  </button>
                   <span>{i.qty}</span>
-                  <button onClick={() => addToCart(i.id)}>+</button>
+                  <button disabled={timeLimitReached} onClick={() => addToCart(i.id)}>
+                    +
+                  </button>
                 </div>
               </div>
             ))
@@ -455,19 +1113,24 @@ export default function App() {
 
         <div className="cartFooter">
           <div className="totalRow">
-            <span>Toplam:</span>
+            <span>{t[lang].total}:</span>
             <span>{formatAZN(total)}</span>
           </div>
 
-          <button className="checkoutBtn" onClick={checkout}>
-            WhatsApp ilə sifariş göndər
+          <button
+            className="checkoutBtn"
+            disabled={timeLimitReached || !cartItems.length}
+            onClick={checkout}
+          >
+            {t[lang].checkout}
           </button>
 
-          <button className="dangerBtn" onClick={clearCart}>
-            Səbəti təmizlə
+          <button className="dangerBtn" disabled={timeLimitReached} onClick={clearCart}>
+            {t[lang].clear}
           </button>
         </div>
       </aside>
     </>
   );
 }
+
