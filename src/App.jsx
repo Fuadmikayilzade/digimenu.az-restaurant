@@ -2105,7 +2105,6 @@ export default function App() {
   const [blocked, setBlocked] = useState(false);
   const [sessionReady, setSessionReady] = useState(false);
 
-  // 🔒 Session başlatmaq
   useEffect(() => {
     const init = async () => {
       try {
@@ -2123,7 +2122,6 @@ export default function App() {
     init();
   }, []);
 
-  // 📡 Google Sheets-dən data
   useEffect(() => {
     fetch(SHEET_JSON_URL)
       .then((res) => res.json())
@@ -2143,7 +2141,6 @@ export default function App() {
       .catch((err) => console.error("Sheet error:", err));
   }, [lang]);
 
-  // ⏱ 30 dəq limit
   useEffect(() => {
     if (!tableNumber) return;
     setTimeLimitReached(false);
@@ -2213,40 +2210,15 @@ export default function App() {
     setSessionReady(true);
   };
 
-  const handleCheckout = async () => {
-    if (!tableNumber.trim()) {
-      alert(t[lang].tableAlert);
-      return;
-    }
-
-    await setTableId(tableNumber);
-
-    const valid = await checkSession();
-    if (!valid) {
-      alert("Session bitib. Zəhmət olmasa QR kodu yenidən skan edin.");
-      setBlocked(true);
-      return;
-    }
-
+  const generateWhatsAppLink = () => {
     let now = new Date();
     let msg = `Masa: ${tableNumber}\nVaxt: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}\n\n`;
-    cartItems.forEach(
-      (i) => {
-        msg += `${i.title} x${i.qty} - ${formatAZN(i.price * i.qty)}\n`;
-        if (notes[i.id]) msg += `📝 ${notes[i.id]}\n`;
-      }
-    );
+    cartItems.forEach((i) => {
+      msg += `${i.title} x${i.qty} - ${formatAZN(i.price * i.qty)}\n`;
+      if (notes[i.id]) msg += `📝 ${notes[i.id]}\n`;
+    });
     msg += `\nToplam: ${formatAZN(total)}`;
-
-    window.open(
-      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,
-      "_blank"
-    );
-
-    setCart({});
-    setNotes({});
-    setIsDrawerOpen(false);
-    setOrderSent(true);
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
   };
 
   if (blocked) {
@@ -2292,14 +2264,12 @@ export default function App() {
             </div>
           </div>
 
-          {/* Dil seçimi */}
           <div className="langSwitch">
             <button onClick={() => setLang("az")}>AZ</button>
             <button onClick={() => setLang("en")}>EN</button>
             <button onClick={() => setLang("ru")}>RU</button>
           </div>
 
-          {/* Kateqoriyalar */}
           <div className="chips-container">
             {categories.map((c) => (
               <div
@@ -2424,9 +2394,20 @@ export default function App() {
             <span>{formatAZN(total)}</span>
           </div>
 
-          <button className="checkoutBtn" onClick={handleCheckout}>
+          <a
+            className="checkoutBtn"
+            href={generateWhatsAppLink()}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              setCart({});
+              setNotes({});
+              setIsDrawerOpen(false);
+              setOrderSent(true);
+            }}
+          >
             {t[lang].checkout}
-          </button>
+          </a>
 
           <button className="dangerBtn" onClick={handleClearCart}>
             {t[lang].clear}
@@ -2434,7 +2415,6 @@ export default function App() {
         </div>
       </aside>
 
-      {/* Rating sifarişdən sonra */}
       {orderSent && (
         <div className="overlay show">
           <div className="drawer show">
