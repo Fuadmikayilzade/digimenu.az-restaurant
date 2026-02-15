@@ -696,3 +696,50 @@ body{
 @media(max-width:560px){.grid{grid-template-columns:1fr;}}
 
 
+.ratingBox {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.star {
+  font-size: 32px;
+  cursor: pointer;
+  margin: 0 6px;
+  transition: 0.2s ease;
+  color: #ccc;
+}
+
+.star:hover {
+  transform: scale(1.2);
+  color: gold;
+}
+
+.activeStar {
+  color: gold;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+}
+
+
+.rating-container {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.star {
+  font-size: 28px;
+  cursor: pointer;
+  color: #ccc;
+  transition: all 0.3s ease;
+}
+
+.star:hover {
+  transform: scale(1.2);
+  color: #ffb400;
+}
+
+.star.active {
+  color: #ff9800;
+  text-shadow: 0 0 8px rgba(255,152,0,0.7);
+}
